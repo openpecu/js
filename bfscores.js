@@ -1,63 +1,35 @@
-// Enhanced live scores with leagues
-const leagues = {
-  brasileirao: [
-    { home: "Flamengo", away: "Palmeiras", score: "2 - 1", status: "Encerrado" },
-    { home: "Corinthians", away: "Santos", score: "1 - 1", status: "Ao Vivo" },
-    { home: "São Paulo", away: "Grêmio", score: "0 - 0", status: "1º Tempo" }
-  ],
-  copa: [
-    { home: "Cruzeiro", away: "Atlético-MG", score: "1 - 0", status: "Ao Vivo" },
-    { home: "Bahia", away: "Fortaleza", score: "0 - 2", status: "2º Tempo" }
-  ],
-  libertadores: [
-    { home: "Fluminense", away: "River Plate", score: "2 - 2", status: "Encerrado" },
-    { home: "Athletico-PR", away: "Boca Juniors", score: "0 - 0", status: "A iniciar" }
-  ]
-};
+const matches = [
+  { id: "flamengo-palmeiras", home: 2, away: 1, time: 90, status: "Encerrado" },
+  { id: "corinthians-santos", home: 1, away: 1, time: 62, status: "Ao Vivo" }
+];
 
-let currentLeague = "brasileirao";
+function tick() {
+  matches.forEach(m => {
+    const el = document.querySelector(`[data-match="${m.id}"]`);
+    if (!el) return;
 
-function renderScores() {
-  const board = document.getElementById("scoreboard");
-  if (!board) return;
-  board.innerHTML = "";
-  leagues[currentLeague].forEach(m => {
-    const div = document.createElement("div");
-    div.className = "score";
-    div.innerHTML = `
-      <strong>${m.home}</strong>
-      <span>${m.score}</span>
-      <strong>${m.away}</strong>
-      <span class="badge ${m.status==='Ao Vivo'?'live':(m.status==='Encerrado'?'end':'soon')}">${m.status}</span>
-    `;
-    board.appendChild(div);
-  });
-}
-
-function tickScores(){
-  Object.values(leagues).forEach(list => {
-    list.forEach(m => {
-      if (Math.random() > 0.7) {
-        const h = Math.floor(Math.random()*4);
-        const a = Math.floor(Math.random()*4);
-        m.score = `${h} - ${a}`;
-        const states = ["1º Tempo", "2º Tempo", "Ao Vivo", "Encerrado", "A iniciar"];
-        m.status = states[Math.floor(Math.random()*states.length)];
+    if (m.status === "Ao Vivo") {
+      m.time += Math.floor(Math.random() * 2) + 1;
+      if (Math.random() > 0.8) {
+        Math.random() > 0.5 ? m.home++ : m.away++;
+        flash(el);
       }
-    });
+      if (m.time >= 90) {
+        m.status = "Encerrado";
+        el.querySelector(".badge").className = "badge end";
+        el.querySelector(".badge").textContent = "Encerrado";
+      }
+    }
+
+    el.querySelector(".home").textContent = m.home;
+    el.querySelector(".away").textContent = m.away;
+    el.querySelector("time").textContent = m.time + "’";
   });
-  renderScores();
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll(".tab").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      currentLeague = btn.dataset.league;
-      renderScores();
-    });
-  });
-  renderScores();
-  setInterval(tickScores, 15000);
-});
+function flash(el) {
+  el.classList.add("flash");
+  setTimeout(() => el.classList.remove("flash"), 800);
+}
+
+setInterval(tick, 10000);

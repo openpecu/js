@@ -71,6 +71,22 @@ document.addEventListener("DOMContentLoaded", () => {
       m.odds[i] = Math.max(1.1, parseFloat((m.odds[i] + parseFloat(change)).toFixed(2)));
     }
   }
+function fluctuateOdds(m) {
+  for (let i = 0; i < 3; i++) {
+    const change = (Math.random() * 0.15 - 0.075).toFixed(2);
+    const newValue = Math.max(1.1, parseFloat((m.odds[i] + parseFloat(change)).toFixed(2)));
+
+    const selector = `[data-match="${m.id}"] .odds .odd:nth-child(${i + 1})`;
+    const el = document.querySelector(selector);
+    if (el) {
+      el.classList.remove('up', 'down');
+      if (newValue > m.odds[i]) el.classList.add('up');
+      if (newValue < m.odds[i]) el.classList.add('down');
+    }
+
+    m.odds[i] = newValue;
+  }
+}
 
   function tick() {
     leagues[currentLeague].forEach(m => {

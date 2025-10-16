@@ -65,12 +65,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   
-  function fluctuateOdds(m) {
-    for (let i = 0; i < 3; i++) {
-      const change = (Math.random() * 0.15 - 0.075).toFixed(2); // ±0.075
-      m.odds[i] = Math.max(1.1, parseFloat((m.odds[i] + parseFloat(change)).toFixed(2)));
-    }
-  }
 function fluctuateOdds(m) {
   for (let i = 0; i < 3; i++) {
     const change = (Math.random() * 0.15 - 0.075).toFixed(2);
@@ -87,6 +81,7 @@ function fluctuateOdds(m) {
     m.odds[i] = newValue;
   }
 }
+
 
   function tick() {
     leagues[currentLeague].forEach(m => {
